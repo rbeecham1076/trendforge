@@ -26,101 +26,182 @@ function generateMockResults(query: string, platform: string): TrendAnalysisResu
       const niche = query.toLowerCase();
       const capQuery = capitalizeWords(query);
 
-      // Smart product templates that vary by niche keywords
-      const isDecor = niche.includes("decor") || niche.includes("home") || niche.includes("room");
-      const isJewelry = niche.includes("jewelry") || niche.includes("necklace") || niche.includes("ring") || niche.includes("earring") || niche.includes("bracelet");
-      const isClothing = niche.includes("clothing") || niche.includes("shirt") || niche.includes("dress") || niche.includes("fashion") || niche.includes("wear") || niche.includes("vintage");
-      const isPet = niche.includes("pet") || niche.includes("dog") || niche.includes("cat");
-      const isArt = niche.includes("art") || niche.includes("print") || niche.includes("poster") || niche.includes("painting");
-      const isDigital = niche.includes("digital") || niche.includes("printable") || niche.includes("template") || niche.includes("planner") || niche.includes("sticker");
-      const isGift = niche.includes("gift") || niche.includes("personalized") || niche.includes("custom");
-
-      // Seed-based randomization for consistent results per query
       const seed = niche.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
       const rng = (min: number, max: number) => {
         const x = Math.sin(seed + min * 12.9898 + max * 78.233) * 43758.5453;
         return Math.floor(min + (x - Math.floor(x)) * (max - min + 1));
       };
 
-      const productTemplates = [
-        {
-          name: (q: string) => isJewelry ? `Handmade ${q} Necklace — Minimalist Layering Piece` : isDigital ? `${q} Bundle — 50+ Digital Downloads` : isPet ? `Custom ${q} Pet Portrait — Digital Art Print` : isClothing ? `Vintage-Inspired ${q} — Limited Edition` : isArt ? `${q} Gallery Wall Set — Museum Quality Prints` : `Handcrafted ${q} Wall Art Set`,
-          score: rng(82, 95),
-          competition: isDigital ? "Medium" : "Low",
-          demand: "High",
-          price: isJewelry ? "$22-45" : isDigital ? "$8-18" : "$28-55",
-          tags: (q: string) => [q.toLowerCase(), "handmade", "gift idea", "trending now", "small shop", "unique find", "best seller", "premium quality", isJewelry ? "minimalist jewelry" : "home decor", "aesthetic", "must have", "new arrival", "popular"],
-          desc: (q: string) => `This ${q.toLowerCase()} is designed to captivate buyers with its unique aesthetic and premium craftsmanship. Perfect for ${isGift ? "gift-giving occasions" : "everyday use"}, it combines style with practicality. Current market data shows strong buyer demand with low seller saturation — an ideal product to launch now on ${platform}.`,
-          bundles: (q: string) => [`Bundle with complementary ${q} design`, "Add gift packaging upgrade", "Pair with matching accessory set"],
-        },
-        {
-          name: (q: string) => isJewelry ? `${q} Earrings — Hypoallergenic Stud Set` : isDigital ? `Editable ${q} Templates — Canva Compatible` : isPet ? `Personalized ${q} Collar & Leash Set` : isClothing ? `${q} Tote Bag — Canvas Eco-Friendly` : isGift ? `Personalized ${q} Gift Box — Curated Set` : `${q} Storage Organizer (Set of 3)`,
-          score: rng(72, 89),
-          competition: "Low",
-          demand: isPet ? "Medium" : "High",
-          price: isJewelry ? "$15-28" : isDigital ? "$5-12" : "$22-42",
-          tags: (q: string) => [q.toLowerCase(), "organizer", "trending", "handmade gift", "eco friendly", "small business", "sustainable", "aesthetic decor", "must have", "new", "popular gift", "unique", "quality"],
-          desc: (q: string) => `A thoughtfully designed ${q.toLowerCase()} that solves a real customer need while looking beautiful. This product category shows ${rng(25, 45)}% year-over-year search growth on ${platform}. Early movers in this space are seeing strong margins with relatively low ad spend — position now before competition increases.`,
-          bundles: (q: string) => [`Bundle with matching ${q} set`, "Add subscription refill option", "Pair with premium display stand"],
-        },
-        {
-          name: (q: string) => isJewelry ? `${q} Ring — Stackable Gold Vermeil Band` : isDigital ? `${q} Printable Wall Art — Instant Download` : isPet ? `Custom ${q} Bandana — Reversible Design` : isClothing ? `${q} Hoodie — Premium Streetwear Style` : isArt ? `${q} Art Prints — Gallery Quality Set of 6` : `${q} Throw Pillow Covers (2-Pack)`,
-          score: rng(65, 85),
-          competition: isDigital ? "High" : "Medium",
-          demand: "High",
-          price: isJewelry ? "$18-35" : isDigital ? "$3-9" : "$16-30",
-          tags: (q: string) => [q.toLowerCase(), "modern", "trending now", "gift ready", "small shop", "quality materials", "stylish", "everyday essential", "popular", "new favorite", "best seller", "limited", "exclusive"],
-          desc: (q: string) => `Customers are actively searching for ${q.toLowerCase()} with high purchase intent. This design hits the sweet spot between trendy and timeless — appealing to impulse buyers while remaining relevant long-term. Consider offering multiple color/pattern variants to increase average order value and capture more search traffic.`,
-          bundles: (q: string) => [`Bundle ${q} with matching accessory`, "Create a 'complete the look' set", "Add premium gift wrapping service"],
-        },
-        {
-          name: (q: string) => isJewelry ? `DIY ${q} Making Kit — Beginner Friendly` : isDigital ? `${q} Sticker Pack — 100+ Designs` : isPet ? `${q} Treat Jar — Personalized Ceramic` : isClothing ? `${q} Embroidered Patch Set — Iron-On` : isGift ? `Custom ${q} Name Sign — Personalized Decor` : `DIY ${q} Craft Kit — Complete Set`,
-          score: rng(68, 82),
-          competition: "Low",
-          demand: isDigital ? "High" : "Medium",
-          price: isJewelry ? "$25-40" : isDigital ? "$4-11" : "$20-38",
-          tags: (q: string) => [q.toLowerCase(), "diy", "craft kit", "beginner friendly", "handmade", "creative gift", "weekend project", "mindful crafting", "hobby", "maker", "starter kit", "tutorial included", "fun activity"],
-          desc: (q: string) => `DIY ${q.toLowerCase()} kits are surging in popularity — buyers love the experience of creating something themselves. Kit formats command higher perceived value and often sell at premium prices with lower return rates. Market data shows ${rng(40, 70)}% growth in this category. Include video instructions for best reviews.`,
-          bundles: (q: string) => [`Bundle with advanced ${q} kit upgrade`, "Add monthly craft subscription", "Pair with tool/accessory starter pack"],
-        },
-        {
-          name: (q: string) => isJewelry ? `${q} Bracelet — Adjustable Charm Chain` : isDigital ? `${q} Planner Template — Digital Download` : isPet ? `${q} Pet Bed — Luxury Handmade` : isClothing ? `${q} Scrunchie Set — Silk Hair Ties` : isArt ? `${q} Sticker Sheet — Waterproof Vinyl` : `${q} Table Runner — Handcrafted Linen`,
-          score: rng(75, 91),
-          competition: "Medium",
-          demand: "Medium",
-          price: isJewelry ? "$12-25" : isDigital ? "$3-8" : "$18-35",
-          tags: (q: string) => [q.toLowerCase(), "handmade", "beautiful", "unique gift", "trending", "small batch", "quality", "aesthetic", "popular", "new", "favorite", "stylish", "must have"],
-          desc: (q: string) => `A versatile ${q.toLowerCase()} that appeals to a broad customer base. This product photographs beautifully — high-quality lifestyle images are the #1 factor in conversion rates on ${platform}. Price point is optimized for impulse purchases while maintaining healthy margins. Consider seasonal color variations to refresh listings quarterly.`,
-          bundles: (q: string) => [`Bundle with complementary ${q} item`, "Create a gift set bundle", "Add coordinating seasonal variation"],
-        },
-      ];
+      // ── Upscale Boutique Design Templates ──────────────────────────
+      // Each template generates premium design assets (SVG, PNG, DTF, etc.)
+      // targeted at boutique, luxury, and high-end POD markets
 
-      const products: ProductOpportunity[] = productTemplates.map((t, i) => ({
-        name: t.name(capQuery),
-        opportunityScore: t.score,
-        competitionLevel: t.competition as "Low" | "Medium" | "High",
-        estimatedDemand: t.demand as "Low" | "Medium" | "High",
-        priceRange: t.price,
-        seoTitle: `${t.name(capQuery)} | ${platform} Best Seller | Unique ${capQuery} Gift Idea`,
-        etsyTags: t.tags(capQuery).slice(0, 13),
-        description: t.desc(capQuery),
-        bundleIdeas: t.bundles(capQuery),
-        seasonalRelevance: i === 3 ? "Peaks in fall/winter (indoor hobby season)" : i === 4 ? "November-December holiday peak" : "Year-round (peaks in spring and holiday season)",
-      }));
+      const isWedding = niche.includes("wedding") || niche.includes("bride") || niche.includes("bridal");
+      const isFashion = niche.includes("fashion") || niche.includes("style") || niche.includes("luxury") || niche.includes("chic") || niche.includes("couture");
+      const isBeauty = niche.includes("beauty") || niche.includes("salon") || niche.includes("spa") || niche.includes("nails") || niche.includes("makeup") || niche.includes("skincare");
+      const isBusiness = niche.includes("brand") || niche.includes("logo") || niche.includes("business") || niche.includes("marketing") || niche.includes("social media");
+      const isHome = niche.includes("home") || niche.includes("decor") || niche.includes("interior") || niche.includes("farmhouse") || niche.includes("modern");
+      const isAesthetic = niche.includes("aesthetic") || niche.includes("soft") || niche.includes("dream") || niche.includes("vintage") || niche.includes("retro") || niche.includes("pastel");
+      const isHoliday = niche.includes("christmas") || niche.includes("holiday") || niche.includes("halloween") || niche.includes("thanksgiving") || niche.includes("easter");
+
+      interface DesignTemplate {
+        designType: string;
+        fileFormat: string;
+        names: string[];
+        scoreRange: [number, number];
+        priceRange: string;
+        monthlySales: [number, number];
+        tags: string[];
+        designTips: string;
+        mockupPrompts: string[];
+        niches: string[];
+      }
+
+      const templates: DesignTemplate[] = [
+        isWedding ? {
+          designType: "SVG",
+          fileFormat: "SVG Bundle",
+          names: [
+            `Elegant ${capQuery} Monogram Suite — 24 Luxury SVG Files`,
+            `${capQuery} Calligraphy Place Card Collection — Editable SVG`,
+            `Boutique ${capQuery} Invitation Template Bundle — 6 Designs`,
+            `Premium ${capQuery} Foil Press SVG — Letterpress Style`,
+            `Luxury ${capQuery} Table Number Set — Modern Calligraphy SVG`,
+          ],
+          scoreRange: [85, 96],
+          priceRange: "$12-24",
+          monthlySales: [180, 350],
+          tags: ["wedding svg", "luxury invitation", "calligraphy design", "boutique wedding", "premium template", "editable svg", "gold foil", "elegant suite", "custom monogram"],
+          designTips: "Use slim serif fonts with delicate flourishes. White space is your friend — let the design breathe. Gold foil effect overlays command 35% higher prices. Offer matching suites (invite + rsvp + place card + table number) to increase AOV.",
+          mockupPrompts: ["A boutique wedding invitation suite displayed on silk ribbon with dried flowers, soft natural lighting, beige linen background, editorial photography style"],
+          niches: ["wedding stationery", "luxury invitations", "bridal suite", "calligraphy"],
+        } : null,
+        isFashion || isBeauty ? {
+          designType: "PNG",
+          fileFormat: "PNG Clipart 300dpi",
+          names: [
+            `Haute Couture ${capQuery} Illustration Set — 18 PNG Files`,
+            `${capQuery} Editorial Fashion Sketch Bundle — Commercial Use`,
+            `Chic ${capQuery} Logo & Branding Kit — Boutique Style PNG`,
+            `Runway-Inspired ${capQuery} Pattern Collection — Seamless PNG`,
+            `Glam ${capQuery} Aesthetic Clipart — Luxury Beauty Illustrations`,
+          ],
+          scoreRange: [78, 92],
+          priceRange: "$10-22",
+          monthlySales: [150, 320],
+          tags: ["fashion illustration", "boutique clipart", "editorial style", "luxury design", "commercial use", "chic aesthetic", "premium png", "haute couture", "beauty branding"],
+          designTips: "Hand-drawn look with intentional imperfection reads as 'artisan' not 'amateur'. Watercolor textures add perceived value. Offer both light and dark background versions. Create coordinating sets (logo + patterns + illustrations) for brand kit upsells.",
+          mockupPrompts: ["A luxury fashion illustration printed on textured cotton paper, styled with gold accessories and silk ribbon on a marble surface, soft studio lighting"],
+          niches: ["fashion design", "boutique branding", "editorial illustration", "beauty art"],
+        } : null,
+        isBusiness || isAesthetic ? {
+          designType: "Wall Art",
+          fileFormat: "Digital Print Set",
+          names: [
+            `${capQuery} Gallery Wall Collection — 12 Premium Prints`,
+            `Modern ${capQuery} Art Print Bundle — Museum Quality 300dpi`,
+            `Boutique ${capQuery} Wall Art — Abstract Luxury Design`,
+            `${capQuery} Aesthetic Poster Set — Scandinavian Style 8x10`,
+            `Designer ${capQuery} Print Suite — Gallery Wall Ready`,
+          ],
+          scoreRange: [82, 95],
+          priceRange: "$14-28",
+          monthlySales: [200, 450],
+          tags: ["wall art set", "gallery wall", "premium print", "aesthetic decor", "museum quality", "large format", "boutique art", "modern design", "instant download"],
+          designTips: "Offer in 5+ ratio sizes (2:3, 3:4, 4:5, 11:14, ISO). Include a gallery wall layout guide as a freebie — it increases review rates by 40%. Neutral palettes outsell bold 3:1 in premium segments. Mockups should show framed, styled rooms.",
+          mockupPrompts: ["A curated gallery wall featuring abstract art prints in gold frames, styled living room with neutral tones, interior design magazine quality"],
+          niches: ["wall art", "gallery prints", "home decor", "digital download"],
+        } : null,
+        isHome || isAesthetic ? {
+          designType: "DTF",
+          fileFormat: "DTF Transfer",
+          names: [
+            `Boutique ${capQuery} DTF Transfer — Ready to Press Design`,
+            `Premium ${capQuery} Heat Transfer Bundle — 8 DTF Prints`,
+            `Luxury ${capQuery} Apparel Transfer — Commercial Grade DTF`,
+            `Chic ${capQuery} T-Shirt Design — Boutique Quality DTF`,
+            `Designer ${capQuery} DTF Gang Sheet — 12 Mixed Designs`,
+          ],
+          scoreRange: [76, 90],
+          priceRange: "$8-18",
+          monthlySales: [120, 280],
+          tags: ["dtf transfer", "ready to press", "apparel design", "boutique shirt", "heat transfer", "commercial grade", "custom apparel", "small business", "gang sheet"],
+          designTips: "Boutique DTF buyers look for designs they can't find at big box stores. Retro typography, vintage illustrations, and elevated humor sell best. Include size guides and pressing instructions. Offer coordinated mini-collections (mom + me sets, couple designs).",
+          mockupPrompts: ["A premium DTF printed t-shirt displayed on a boutique clothing rack, soft lighting, minimalist store interior, editorial fashion style"],
+          niches: ["apparel design", "dtf prints", "boutique clothing", "heat transfer"],
+        } : null,
+        isHoliday || isAesthetic ? {
+          designType: "Sublimation",
+          fileFormat: "Sublimation PNG",
+          names: [
+            `Designer ${capQuery} Sublimation Bundle — 20+ PNG Files`,
+            `Boutique ${capQuery} Tumbler Wrap — Seamless Sublimation`,
+            `${capQuery} Luxury Mug Design Set — High-End Sublimation`,
+            `Premium ${capQuery} Blanket Template — Oversized Sublimation`,
+            `${capQuery} Boutique Apparel Sublimation — Designer Collection`,
+          ],
+          scoreRange: [72, 88],
+          priceRange: "$9-20",
+          monthlySales: [140, 310],
+          tags: ["sublimation design", "tumbler wrap", "luxury template", "boutique png", "seamless", "high resolution", "apparel design", "mug template", "commercial use"],
+          designTips: "Seamless patterns that wrap continuously command premium prices. Watercolor textures with metallic accents (gold foil simulation) sell at 2x standard designs. Offer coordinating bundles (tumbler + mug + shirt using same design family).",
+          mockupPrompts: ["A collection of luxury sublimation tumblers with metallic gold accents displayed on a marble countertop, boutique retail styling, product photography"],
+          niches: ["sublimation", "tumbler design", "apparel template", "luxury drinkware"],
+        } : null,
+        {
+          designType: "Stickers",
+          fileFormat: "Digital Sticker Sheet",
+          names: [
+            `${capQuery} Premium Sticker Bundle — 50+ Boutique Designs`,
+            `Luxury ${capQuery} Digital Sticker Sheet — Commercial Use`,
+            `${capQuery} Aesthetic Planner Stickers — Designer Collection`,
+            `Boutique ${capQuery} Label Stickers — Small Business Packaging`,
+            `Chic ${capQuery} Decal Set — Waterproof Vinyl Stickers`,
+          ],
+          scoreRange: [80, 93],
+          priceRange: "$6-16",
+          monthlySales: [220, 500],
+          tags: ["digital stickers", "planner aesthetic", "boutique label", "commercial use", "vinyl decal", "premium design", "small business", "packaging", "cute aesthetic"],
+          designTips: "Coordinated sticker 'aesthetic packs' (matching color palettes, themes) convert 3x better than random assortments. Offer both printable + pre-cut options. Small business packaging labels are an underserved premium niche — shops pay $12-18 for professional label designs.",
+          mockupPrompts: ["Luxury sticker sheets arranged on a white desk with gold scissors and washi tape, natural light, clean aesthetic, boutique product photography"],
+          niches: ["digital stickers", "planner goods", "packaging labels", "vinyl decals"],
+        },
+      ].filter((t): t is DesignTemplate => t !== null);
+
+      // Generate 5 products from templates
+      const products: ProductOpportunity[] = templates.slice(0, 5).map((t, i) => {
+        const nameIndex = i % t.names.length;
+        const sales = rng(t.monthlySales[0], t.monthlySales[1]);
+        return {
+          name: t.names[nameIndex],
+          opportunityScore: rng(t.scoreRange[0], t.scoreRange[1]),
+          competitionLevel: (i < 2 ? "Low" : i < 4 ? "Medium" : "High") as "Low" | "Medium" | "High",
+          estimatedDemand: (sales > 250 ? "High" : sales > 150 ? "Medium" : "Low") as "Low" | "Medium" | "High",
+          priceRange: t.priceRange,
+          seoTitle: `${t.names[nameIndex]} | Commercial Use | ${capQuery} Boutique Design`,
+          etsyTags: [...t.tags, capQuery.toLowerCase(), "premium", "luxury", "boutique"].slice(0, 13),
+          description: `Boutique-grade ${t.designType.toLowerCase()} design for discerning creators. ${t.designTips.split(".")[0]}. Estimated ${sales}+ units/month on Etsy in this niche. Price point optimized for the premium segment — buyers in this category willingly pay more for designs that feel exclusive and professionally crafted.`,
+          bundleIdeas: [
+            `Bundle with coordinating ${t.designType.toLowerCase()} set (save 25%)`,
+            "Add matching brand kit upgrade",
+            "Include commercial license for small business use",
+          ],
+          seasonalRelevance: isHoliday ? "Peaks 6-8 weeks before holiday" : "Year-round with Q4 holiday boost",
+          designType: t.designType,
+          fileFormat: t.fileFormat,
+          niches: t.niches,
+          estimatedSales: `${sales}+ monthly`,
+          designTips: t.designTips,
+          mockupPrompt: t.mockupPrompts[0],
+        } as ProductOpportunity & { designType: string; fileFormat: string; niches: string[]; estimatedSales: string; designTips: string; mockupPrompt: string };
+      });
 
       const overallScore = Math.round(products.reduce((sum, p) => sum + p.opportunityScore, 0) / products.length);
 
-      const platformInsights: Record<string, string> = {
-        Etsy: "a 35% year-over-year increase in search volume with relatively few sellers specializing in this exact niche",
-        Shopify: "rising consumer interest driven by social media trends, with a 28% quarter-over-quarter uptick in related searches",
-        "Amazon Handmade": "growing demand with limited competition — early movers are capturing significant market share",
-        POD: "consistent print-on-demand demand fueled by TikTok and Instagram, with trending hashtags driving discovery",
-      };
-
       return {
         opportunityScore: overallScore,
-        marketInsight: `The "${query}" niche on ${platform} is showing strong growth with ${platformInsights[platform] || platformInsights.Etsy}. Competition is mostly low to medium — an excellent entry point for new sellers. Focus on unique designs, lifestyle photography, and strategic pricing ($15-55 range) to stand out. Products in this niche average ${rng(150, 400)}+ monthly searches with climbing interest.`,
-        products,
+        marketInsight: `The "${query}" design niche on ${platform} shows strong demand from boutique and luxury buyers. Premium-positioned designs at $8-24 price points are clearing ${rng(150, 500)}+ units/month. Competition is ${overallScore > 85 ? "surprisingly low" : "moderate"} — sellers offering coordinated design suites and commercial licenses are capturing the highest margins. Focus on ${isWedding ? "elegant, timeless aesthetics" : isFashion ? "editorial-quality illustrations" : isBeauty ? "chic, sophisticated branding" : isHome ? "curated, designer-grade collections" : "elegant, boutique-quality designs"} that feel exclusive rather than mass-market.`,
+        products: products as ProductOpportunity[],
       };
     }
 

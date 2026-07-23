@@ -1,3 +1,17 @@
+export type DesignType =
+  | "SVG"
+  | "PNG"
+  | "DTF"
+  | "Wall Art"
+  | "Sublimation"
+  | "Stickers";
+
+export type TrendSource =
+  | "etsy-trending"
+  | "google-trends"
+  | "seasonal"
+  | "ai-generated";
+
 export interface ProductOpportunity {
   name: string;
   opportunityScore: number;
@@ -9,6 +23,14 @@ export interface ProductOpportunity {
   description: string;
   bundleIdeas: string[];
   seasonalRelevance: string;
+  // ─── Design-specific fields ─────────────────────────────
+  designType: DesignType;
+  fileFormat: string;
+  niches: string[];
+  estimatedSales: number;
+  designTips: string;
+  mockupPrompt: string;
+  trendSource: TrendSource;
 }
 
 export interface ImageAnalysis {
@@ -22,6 +44,7 @@ export interface TrendAnalysisResult {
   opportunityScore: number;
   marketInsight: string;
   products: ProductOpportunity[];
+  etsyTrendingData?: EtsyTrendingData;
 }
 
 export interface TrendSearchRequest {
@@ -35,4 +58,14 @@ export interface SavedProject {
   platform: string;
   result: TrendAnalysisResult;
   savedAt: string;
+}
+
+// ─── Etsy trend scraper types ─────────────────────────────
+
+export interface EtsyTrendingData {
+  trendingSearches: string[];
+  popularTags: string[];
+  risingCategories: string[];
+  fetchedAt: string;
+  source: string;
 }
