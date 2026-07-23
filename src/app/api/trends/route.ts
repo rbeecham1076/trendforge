@@ -356,7 +356,7 @@ function generateTags(
   ];
   tags.push(...variants);
 
-  return [...new Set(tags)].slice(0, 13);
+  return Array.from(new Set(tags)).slice(0, 13);
 }
 
 // ─── Mock data generator — DESIGN-FOCUSED ─────────────────────────────

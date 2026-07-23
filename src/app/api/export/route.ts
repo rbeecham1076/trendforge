@@ -14,7 +14,7 @@ function csvEscape(value: string): string {
   return `"${escaped}"`;
 }
 
-// Build CSV from product data
+// Build CSV from product data (updated with design-specific fields)
 function buildProductCsv(
   products: Array<{
     name?: string;
@@ -25,28 +25,55 @@ function buildProductCsv(
     seoTitle?: string;
     etsyTags?: string[];
     description?: string;
+    designType?: string;
+    fileFormat?: string;
+    niches?: string[];
+    estimatedSales?: number;
+    designTips?: string;
+    mockupPrompt?: string;
+    trendSource?: string;
+    seasonalRelevance?: string;
+    bundleIdeas?: string[];
   }>
 ): string {
   const headers = [
-    "Product Name",
+    "Design Name",
+    "Design Type",
+    "File Format",
     "Opportunity Score",
     "Competition",
     "Demand",
+    "Est. Monthly Sales",
     "Price Range",
+    "Trend Source",
     "SEO Title",
     "Etsy Tags",
+    "Niches",
     "Description",
+    "Design Tips",
+    "Mockup Prompt",
+    "Seasonal Relevance",
+    "Bundle Ideas",
   ];
 
   const rows = products.map((p) => [
     csvEscape(p.name || ""),
+    csvEscape(p.designType || ""),
+    csvEscape(p.fileFormat || ""),
     String(p.opportunityScore ?? ""),
     csvEscape(p.competitionLevel || ""),
     csvEscape(p.estimatedDemand || ""),
+    String(p.estimatedSales ?? ""),
     csvEscape(p.priceRange || ""),
+    csvEscape(p.trendSource || ""),
     csvEscape(p.seoTitle || ""),
     csvEscape((p.etsyTags || []).join(", ")),
+    csvEscape((p.niches || []).join(", ")),
     csvEscape(p.description || ""),
+    csvEscape(p.designTips || ""),
+    csvEscape(p.mockupPrompt || ""),
+    csvEscape(p.seasonalRelevance || ""),
+    csvEscape((p.bundleIdeas || []).join(" | ")),
   ]);
 
   return [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");

@@ -21,10 +21,75 @@ import {
   Search,
   Download,
   Loader2,
+  Scissors,
+  Image,
+  Shirt,
+  Printer,
+  Sparkles,
+  Sticker,
+  Lightbulb,
+  Camera,
+  Copy,
+  Check,
+  BarChart3,
 } from "lucide-react";
-import type { TrendAnalysisResult, ProductOpportunity } from "@/lib/types";
+import type {
+  TrendAnalysisResult,
+  ProductOpportunity,
+  DesignType,
+} from "@/lib/types";
+
+// ─── Design type config ────────────────────────────────────────────────
+
+const DESIGN_TYPE_CONFIG: Record<
+  DesignType,
+  {
+    icon: typeof Scissors;
+    label: string;
+    variant: "pink" | "coral" | "teal" | "cyan" | "fuchsia" | "amber";
+    bgGradient: string;
+  }
+> = {
+  SVG: {
+    icon: Scissors,
+    label: "SVG",
+    variant: "pink",
+    bgGradient: "from-pink-500/10 via-rose-500/10 to-pink-500/5",
+  },
+  PNG: {
+    icon: Image,
+    label: "PNG",
+    variant: "teal",
+    bgGradient: "from-teal-500/10 via-emerald-500/10 to-teal-500/5",
+  },
+  DTF: {
+    icon: Shirt,
+    label: "DTF",
+    variant: "coral",
+    bgGradient: "from-coral-500/10 via-orange-500/10 to-coral-500/5",
+  },
+  "Wall Art": {
+    icon: Printer,
+    label: "Wall Art",
+    variant: "cyan",
+    bgGradient: "from-cyan-500/10 via-sky-500/10 to-cyan-500/5",
+  },
+  Sublimation: {
+    icon: Sparkles,
+    label: "Sublimation",
+    variant: "fuchsia",
+    bgGradient: "from-fuchsia-500/10 via-purple-500/10 to-fuchsia-500/5",
+  },
+  Stickers: {
+    icon: Sticker,
+    label: "Stickers",
+    variant: "amber",
+    bgGradient: "from-amber-500/10 via-yellow-500/10 to-amber-500/5",
+  },
+};
 
 // ─── Helpers ──────────────────────────────────────────────────────────
+
 function scoreColor(score: number): {
   bg: string;
   text: string;
@@ -55,7 +120,6 @@ function scoreGradient(score: number): string {
   return "from-red-500 via-rose-500 to-pink-500";
 }
 
-// Multi-color tag accent map — cycles through colors for visual variety
 const tagColors = [
   "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
   "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/20",
@@ -65,17 +129,48 @@ const tagColors = [
   "bg-violet-500/10 text-violet-300 border-violet-500/20",
 ];
 
+// ─── Trend source badge ───────────────────────────────────────────────
+
+function TrendSourceBadge({ source }: { source?: string }) {
+  if (!source || source === "ai-generated") return null;
+
+  const config: Record<string, { label: string; color: string }> = {
+    "etsy-trending": {
+      label: "🔴 Etsy Trending",
+      color: "bg-red-500/10 text-red-300 border-red-500/20",
+    },
+    "google-trends": {
+      label: "📈 Google Trends",
+      color: "bg-blue-500/10 text-blue-300 border-blue-500/20",
+    },
+    seasonal: {
+      label: "🌿 Seasonal",
+      color: "bg-green-500/10 text-green-300 border-green-500/20",
+    },
+  };
+
+  const c = config[source];
+  if (!c) return null;
+
+  return (
+    <span
+      className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${c.color}`}
+    >
+      {c.label}
+    </span>
+  );
+}
+
 // ─── Skeleton loader ──────────────────────────────────────────────────
+
 function ResultsSkeleton() {
   return (
     <div className="space-y-6 animate-pulse">
-      {/* Summary skeleton */}
       <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
         <div className="h-8 w-48 bg-white/5 rounded mb-3" />
         <div className="h-4 w-full bg-white/5 rounded mb-2" />
         <div className="h-4 w-3/4 bg-white/5 rounded" />
       </div>
-      {/* Product card skeletons */}
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
@@ -97,6 +192,7 @@ function ResultsSkeleton() {
 }
 
 // ─── Empty state ──────────────────────────────────────────────────────
+
 function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -104,17 +200,58 @@ function EmptyState() {
         <Search className="h-8 w-8 text-gray-600" />
       </div>
       <h3 className="text-lg font-semibold text-white mb-2">
-        Ready to discover trends
+        Ready to discover trending designs
       </h3>
       <p className="text-gray-400 max-w-sm">
-        Enter a niche or keyword above and let our AI find profitable product
-        opportunities for your store.
+        Enter a niche or keyword above and let our AI find profitable design
+        opportunities — SVG bundles, PNG clipart, DTF transfers, and more.
       </p>
     </div>
   );
 }
 
+// ─── Copyable text ────────────────────────────────────────────────────
+
+function CopyableText({ text, label }: { text: string; label?: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="group relative">
+      {label && (
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
+          {label}
+        </div>
+      )}
+      <div className="flex items-start gap-2">
+        <p className="text-sm text-gray-300 bg-white/[0.03] border border-white/10 rounded-lg p-3 leading-relaxed flex-1">
+          {text}
+        </p>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+          onClick={handleCopy}
+          title="Copy to clipboard"
+        >
+          {copied ? (
+            <Check className="h-4 w-4 text-emerald-400" />
+          ) : (
+            <Copy className="h-4 w-4 text-gray-500" />
+          )}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Product card ─────────────────────────────────────────────────────
+
 function ProductCard({
   product,
   index,
@@ -128,6 +265,8 @@ function ProductCard({
 }) {
   const [expanded, setExpanded] = useState(false);
   const color = scoreColor(product.opportunityScore);
+  const designConfig = DESIGN_TYPE_CONFIG[product.designType] ?? DESIGN_TYPE_CONFIG.SVG;
+  const DesignIcon = designConfig.icon;
 
   return (
     <div className="group rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-sm hover:border-white/20 transition-all duration-300 overflow-hidden">
@@ -140,14 +279,25 @@ function ProductCard({
       <div className="p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
               <span className="text-xs text-gray-600 font-mono">
                 #{index + 1}
               </span>
-              <h3 className="text-lg font-semibold text-white truncate">
-                {product.name}
-              </h3>
+              {/* Design type badge */}
+              <Badge
+                variant={designConfig.variant}
+                className="flex items-center gap-1"
+              >
+                <DesignIcon className="h-3 w-3" />
+                {designConfig.label}
+              </Badge>
+              {/* Trend source badge */}
+              <TrendSourceBadge source={product.trendSource} />
             </div>
+            <h3 className="text-lg font-semibold text-white leading-snug">
+              {product.name}
+            </h3>
+            <p className="text-xs text-gray-500 mt-1">{product.fileFormat}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <div
@@ -194,6 +344,24 @@ function ProductCard({
           <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
             <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
               <Users className="h-3 w-3" />
+              Est. Monthly Sales
+            </div>
+            <p className="text-sm font-semibold text-white">
+              {product.estimatedSales?.toLocaleString() ?? "—"}+
+            </p>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+              <DollarSign className="h-3 w-3" />
+              Price Range
+            </div>
+            <p className="text-sm font-semibold text-white">
+              {product.priceRange}
+            </p>
+          </div>
+          <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+            <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+              <BarChart3 className="h-3 w-3" />
               Demand
             </div>
             <p
@@ -208,25 +376,20 @@ function ProductCard({
               {product.estimatedDemand}
             </p>
           </div>
-          <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
-              <DollarSign className="h-3 w-3" />
-              Price Range
-            </div>
-            <p className="text-sm font-semibold text-white">
-              {product.priceRange}
-            </p>
-          </div>
-          <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-            <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
-              <Calendar className="h-3 w-3" />
-              Season
-            </div>
-            <p className="text-sm font-semibold text-white truncate">
-              {product.seasonalRelevance}
-            </p>
-          </div>
         </div>
+
+        {/* Design tips (always visible, compact) */}
+        {product.designTips && (
+          <div className="rounded-lg bg-gradient-to-r from-amber-500/5 via-orange-500/5 to-amber-500/5 border border-amber-500/10 p-3 mb-4">
+            <div className="flex items-start gap-2">
+              <Lightbulb className="h-4 w-4 text-amber-400 shrink-0 mt-0.5" />
+              <p className="text-sm text-amber-200/80 leading-relaxed">
+                <span className="font-medium text-amber-300">Design Tip: </span>
+                {product.designTips}
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Expand toggle */}
         <button
@@ -238,7 +401,9 @@ function ProductCard({
           ) : (
             <ChevronDown className="h-4 w-4" />
           )}
-          {expanded ? "Hide details" : "Show SEO & listing details"}
+          {expanded
+            ? "Hide details"
+            : "Show SEO, mockup prompt & listing details"}
         </button>
 
         {/* Expanded content */}
@@ -266,11 +431,45 @@ function ProductCard({
               </p>
             </div>
 
-            {/* Tags with multi-color accents */}
+            {/* Mockup Prompt (copyable) */}
+            {product.mockupPrompt && (
+              <div>
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
+                  <Camera className="h-3.5 w-3.5" />
+                  Mockup Prompt
+                  <span className="text-[10px] text-gray-600">
+                    (DALL·E / Midjourney)
+                  </span>
+                </div>
+                <CopyableText text={product.mockupPrompt} />
+              </div>
+            )}
+
+            {/* Niches */}
+            {product.niches && product.niches.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
+                  <Tag className="h-3.5 w-3.5" />
+                  Target Niches
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {product.niches.map((n, i) => (
+                    <span
+                      key={n}
+                      className={`text-xs px-2.5 py-1 rounded-full border ${tagColors[i % tagColors.length]}`}
+                    >
+                      {n}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tags */}
             <div>
               <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
                 <Tag className="h-3.5 w-3.5" />
-                Tags ({product.etsyTags.length})
+                Etsy Tags ({product.etsyTags.length})
               </div>
               <div className="flex flex-wrap gap-1.5">
                 {product.etsyTags.map((tag, i) => (
@@ -288,7 +487,7 @@ function ProductCard({
             <div>
               <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
                 <Package className="h-3.5 w-3.5" />
-                Bundle Ideas
+                Bundle & Upsell Ideas
               </div>
               <ul className="space-y-1.5">
                 {product.bundleIdeas.map((idea, i) => (
@@ -302,6 +501,16 @@ function ProductCard({
                 ))}
               </ul>
             </div>
+
+            {/* Seasonal + file format footer */}
+            <div className="flex flex-wrap items-center gap-3 pt-2 text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <Calendar className="h-3 w-3" />
+                {product.seasonalRelevance}
+              </span>
+              <span>•</span>
+              <span>{product.fileFormat}</span>
+            </div>
           </div>
         )}
       </div>
@@ -310,6 +519,7 @@ function ProductCard({
 }
 
 // ─── Main results component ───────────────────────────────────────────
+
 export function TrendResults({
   data,
   isLoading,
@@ -338,9 +548,7 @@ export function TrendResults({
 
       setSavedProducts((prev) => {
         const next = new Set(prev);
-        if (next.has(key)) {
-          // Already saved — we don't support unsave via this API currently
-        } else {
+        if (!next.has(key)) {
           next.add(key);
         }
         sessionStorage.setItem(
@@ -350,7 +558,6 @@ export function TrendResults({
         return next;
       });
 
-      // Save to database via API
       try {
         await fetch("/api/projects", {
           method: "POST",
@@ -367,7 +574,7 @@ export function TrendResults({
           }),
         });
       } catch {
-        // Non-fatal — already updated the UI
+        // Non-fatal
       }
     },
     [query, platform]
@@ -395,7 +602,7 @@ export function TrendResults({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `trendforge-export-${query.replace(/\s+/g, "-").slice(0, 30)}.csv`;
+      a.download = `trendforge-designs-${query.replace(/\s+/g, "-").slice(0, 30)}.csv`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -416,14 +623,15 @@ export function TrendResults({
     <div className="space-y-6">
       {/* Summary card */}
       <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-sm">
-        {/* Multi-color gradient accent bar */}
         <div
           className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${scoreGradient(data.opportunityScore)}`}
         />
         <div className="p-5 sm:p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <div>
-              <p className="text-sm text-gray-500 mb-1">Opportunity Score</p>
+              <p className="text-sm text-gray-500 mb-1">
+                Design Opportunity Score
+              </p>
               <div className="flex items-center gap-3">
                 <span
                   className={`text-5xl sm:text-6xl font-bold ${overviewColor.text}`}
@@ -445,7 +653,7 @@ export function TrendResults({
                 className="text-sm px-3 py-1"
               >
                 {data.opportunityScore >= 80
-                  ? "🔥 Strong Opportunity"
+                  ? "🔥 Strong Design Opportunity"
                   : data.opportunityScore >= 50
                     ? "💡 Worth Exploring"
                     : "⚠️ High Competition"}
@@ -455,6 +663,27 @@ export function TrendResults({
           <p className="text-gray-300 text-sm leading-relaxed">
             {data.marketInsight}
           </p>
+
+          {/* Etsy trending data indicator */}
+          {data.etsyTrendingData && (
+            <div className="mt-3 pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-gray-500">
+              <span className="flex items-center gap-1 text-red-400">
+                <TrendingUp className="h-3 w-3" />
+                Etsy Trends:
+              </span>
+              <span>
+                {data.etsyTrendingData.trendingSearches.slice(0, 5).join(", ")}
+              </span>
+              <span className="text-gray-600">
+                (updated{" "}
+                {new Date(
+                  data.etsyTrendingData.fetchedAt
+                ).toLocaleTimeString()}
+                )
+              </span>
+            </div>
+          )}
+
           <div className="flex items-center gap-3 mt-4 pt-4 border-t border-white/10 text-xs text-gray-500">
             <span>
               Query: <span className="text-gray-300">{query}</span>
@@ -465,10 +694,9 @@ export function TrendResults({
             </span>
             <span>•</span>
             <span>
-              Products:{" "}
+              Designs:{" "}
               <span className="text-gray-300">{data.products.length}</span>
             </span>
-            {/* Export button */}
             <span>•</span>
             <button
               onClick={handleExport}
@@ -486,11 +714,11 @@ export function TrendResults({
         </div>
       </div>
 
-      {/* Product cards */}
+      {/* Design cards */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-white flex items-center gap-2">
           <Star className="h-5 w-5 text-amber-400" />
-          Product Opportunities
+          Design Opportunities
         </h3>
         {data.products.map((product, i) => (
           <ProductCard
@@ -510,7 +738,7 @@ export function TrendResults({
             <Download className="h-4 w-4 text-emerald-400" />
           </div>
           <p className="text-sm text-gray-400">
-            Export all {data.products.length} products as CSV
+            Export all {data.products.length} designs as CSV
           </p>
         </div>
         <Button
