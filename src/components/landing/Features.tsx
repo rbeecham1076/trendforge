@@ -17,7 +17,6 @@ const features = [
       "Our AI scans millions of data points across Etsy, Shopify, Amazon, and social platforms to identify emerging trends before they peak.",
     gradient: "from-indigo-500/20 to-violet-500/20",
     iconColor: "text-indigo-400",
-    borderColor: "border-indigo-500/20 group-hover:border-indigo-500/40",
     accent: "indigo",
   },
   {
@@ -27,7 +26,6 @@ const features = [
       "Every product idea gets a proprietary score based on demand, competition, margin potential, and seasonal timing — so you know exactly what to pursue.",
     gradient: "from-fuchsia-500/20 to-pink-500/20",
     iconColor: "text-fuchsia-400",
-    borderColor: "border-fuchsia-500/20 group-hover:border-fuchsia-500/40",
     accent: "fuchsia",
   },
   {
@@ -37,7 +35,6 @@ const features = [
       "See exactly how many sellers are competing, their price points, review counts, and estimated monthly sales for any product niche.",
     gradient: "from-teal-500/20 to-cyan-500/20",
     iconColor: "text-teal-400",
-    borderColor: "border-teal-500/20 group-hover:border-teal-500/40",
     accent: "teal",
   },
   {
@@ -47,7 +44,6 @@ const features = [
       "Get optimized titles, descriptions, tags, and keywords for every product idea — formatted for Etsy, Shopify, or Amazon listings.",
     gradient: "from-coral-500/20 to-pink-500/20",
     iconColor: "text-coral-400",
-    borderColor: "border-coral-500/20 group-hover:border-coral-500/40",
     accent: "coral",
   },
   {
@@ -57,7 +53,6 @@ const features = [
       "Discover complementary products to bundle together for higher average order value and better margins.",
     gradient: "from-amber-500/20 to-orange-500/20",
     iconColor: "text-amber-400",
-    borderColor: "border-amber-500/20 group-hover:border-amber-500/40",
     accent: "amber",
   },
   {
@@ -67,10 +62,28 @@ const features = [
       "Plan your inventory months ahead with AI-powered seasonal trend predictions and demand forecasting.",
     gradient: "from-emerald-500/20 to-teal-500/20",
     iconColor: "text-emerald-400",
-    borderColor: "border-emerald-500/20 group-hover:border-emerald-500/40",
     accent: "emerald",
   },
 ];
+
+// Static class maps for Tailwind JIT (dynamic classes won't be generated)
+const hoverBorderMap: Record<string, string> = {
+  indigo: "hover:border-indigo-500/40",
+  fuchsia: "hover:border-fuchsia-500/40",
+  teal: "hover:border-teal-500/40",
+  coral: "hover:border-coral-500/40",
+  amber: "hover:border-amber-500/40",
+  emerald: "hover:border-emerald-500/40",
+};
+
+const hoverShadowMap: Record<string, string> = {
+  indigo: "hover:shadow-indigo-500/10",
+  fuchsia: "hover:shadow-fuchsia-500/10",
+  teal: "hover:shadow-teal-500/10",
+  coral: "hover:shadow-coral-500/10",
+  amber: "hover:shadow-amber-500/10",
+  emerald: "hover:shadow-emerald-500/10",
+};
 
 export function Features() {
   return (
@@ -93,10 +106,10 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className={`group relative rounded-xl border border-white/5 bg-white/[0.05] backdrop-blur-sm p-6 hover:bg-white/[0.08] hover:${feature.borderColor} transition-all duration-300 hover:shadow-xl hover:shadow-${feature.accent}-500/10`}
+              className={`group relative rounded-xl border border-white/5 bg-white/[0.05] backdrop-blur-sm p-6 hover:bg-white/[0.08] ${hoverBorderMap[feature.accent]} transition-all duration-300 hover:shadow-xl ${hoverShadowMap[feature.accent]}`}
             >
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} border ${feature.borderColor} group-hover:scale-110 transition-all duration-300`}
+                className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} border border-white/10 group-hover:scale-110 transition-all duration-300`}
               >
                 <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
               </div>

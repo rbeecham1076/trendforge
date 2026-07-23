@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { ImagePlus, Upload, X, Loader2, Sparkles, Palette } from "lucide-react";
+import Image from "next/image";
+import { ImagePlus, Upload, X, Loader2, Palette } from "lucide-react";
 import type { ImageAnalysis } from "@/lib/types";
 
 interface ImageUploadProps {
@@ -157,10 +158,12 @@ export function ImageUpload({ onAnalysisComplete, disabled = false }: ImageUploa
               {/* Thumbnail */}
               <div className="shrink-0">
                 <div className="relative h-20 w-20 rounded-xl overflow-hidden border border-white/10">
-                  <img
+                  <Image
                     src={preview}
                     alt="Upload preview"
-                    className="h-full w-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="80px"
                   />
                   <button
                     onClick={(e) => {

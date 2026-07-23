@@ -1,15 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
-import { Pool } from "@neondatabase/serverless";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
 function createPrismaClient(): PrismaClient {
-  const connectionString = process.env.DATABASE_URL!;
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString) {
+    // Fallback for build time — PrismaClient without adapter
+    console.warn("[prisma] DATABASE_URL not set — using PrismaClient without driver adapter");
+    return new PrismaClient();
+  }
+  // Prisma v7: PrismaNeon takes PoolConfig (not Pool instance)
+  const adapter = new PrismaNeon({ connectionString });
   return new PrismaClient({ adapter });
 }
 
