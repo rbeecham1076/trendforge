@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import type { TrendAnalysisResult, ProductOpportunity } from "@/lib/types";
+import { getTrendSummary } from "@/lib/trends-data";
 
 export const dynamic = "force-dynamic";
 
@@ -193,18 +194,60 @@ function capitalizeWords(str: string): string {
     .join(" ");
 }
 
+// ─── Build market data summary for OpenAI prompt ─────────────────────
+function formatMarketDataForPrompt(marketData: NonNullable<TrendAnalysisResult["marketData"]>): string {
+  const parts: string[] = [];
+
+  parts.push(`Google Trends data: The trend is "${marketData.trendDirection}".`);
+
+  if (marketData.interestTimeline.length > 0) {
+    const values = marketData.interestTimeline.map((p) => p.value);
+    const low = Math.min(...values);
+    const high = Math.max(...values);
+    parts.push(
+      `Interest over the last 12 months ranges from ${low} to ${high} (relative search interest).`
+    );
+  }
+
+  if (marketData.relatedQueries.length > 0) {
+    parts.push(
+      `Rising related search terms include: ${marketData.relatedQueries.join(", ")}.`
+    );
+  }
+
+  if (marketData.topRegions.length > 0) {
+    parts.push(
+      `Top regions showing interest: ${marketData.topRegions.join(", ")}.`
+    );
+  }
+
+  if (marketData.seasonality) {
+    parts.push(`Seasonality detected: ${marketData.seasonality}.`);
+  }
+
+  return parts.join("\n");
+}
+
 // ─── OpenAI call ─────────────────────────────────────────────────────
 async function callOpenAI(
   query: string,
-  platform: string
+  platform: string,
+  marketData?: TrendAnalysisResult["marketData"]
 ): Promise<TrendAnalysisResult> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     console.log("[trends] No OPENAI_API_KEY — using mock data");
-    return generateMockResults(query, platform);
+    const results = generateMockResults(query, platform);
+    if (marketData) results.marketData = marketData;
+    return results;
   }
 
-  const prompt = `You are a product trend analyst for e-commerce sellers. Analyze the niche "${query}" on the platform "${platform}" and return a JSON object with product opportunities.
+  // Build extra context from market data if available
+  const marketContext = marketData
+    ? `\n\nAdditional real-world market data from Google Trends:\n${formatMarketDataForPrompt(marketData)}\n\nUse this real data to inform your opportunity scores, market insights, and product suggestions. If the trend is "rising", boost opportunity scores. If "falling", be more conservative. Incorporate the related queries into product ideas and SEO tags.`
+    : "";
+
+  const prompt = `You are a product trend analyst for e-commerce sellers. Analyze the niche "${query}" on the platform "${platform}" and return a JSON object with product opportunities.${marketContext}
 
 Return ONLY valid JSON (no markdown, no extra text) with this exact structure:
 {
@@ -249,10 +292,14 @@ Provide exactly 5 products. Make data realistic and actionable. Scores should va
     const content = response.choices[0]?.message?.content?.trim() || "";
     // Strip markdown code fences if present
     const json = content.replace(/^```(?:json)?\s*/, "").replace(/\s*```$/, "");
-    return JSON.parse(json) as TrendAnalysisResult;
+    const result = JSON.parse(json) as TrendAnalysisResult;
+    if (marketData) result.marketData = marketData;
+    return result;
   } catch (error) {
     console.error("[trends] OpenAI call failed, falling back to mock:", error);
-    return generateMockResults(query, platform);
+    const result = generateMockResults(query, platform);
+    if (marketData) result.marketData = marketData;
+    return result;
   }
 }
 
@@ -288,8 +335,22 @@ export async function POST(request: NextRequest) {
     const sanitizedQuery = query.trim().slice(0, 200);
     const sanitizedPlatform = platform?.trim() || "Etsy";
 
-    // Get trend analysis
-    const results = await callOpenAI(sanitizedQuery, sanitizedPlatform);
+    // Fetch Google Trends data (non-blocking — fallback gracefully)
+    let marketData: TrendAnalysisResult["marketData"] = undefined;
+    try {
+      const trendsResult = await getTrendSummary(sanitizedQuery);
+      if (trendsResult) {
+        marketData = trendsResult;
+        console.log(`[trends] Google Trends data fetched for "${sanitizedQuery}": ${marketData.trendDirection}`);
+      } else {
+        console.log(`[trends] No Google Trends data available for "${sanitizedQuery}"`);
+      }
+    } catch (trendsError) {
+      console.warn("[trends] Google Trends fetch failed, continuing without it:", trendsError);
+    }
+
+    // Get trend analysis (pass marketData to enrich the prompt)
+    const results = await callOpenAI(sanitizedQuery, sanitizedPlatform, marketData);
 
     // Save to database (don't block on failure)
     try {

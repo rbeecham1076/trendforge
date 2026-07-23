@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   TrendingUp,
+  Minus,
   ChevronDown,
   ChevronUp,
   Tag,
@@ -21,8 +22,13 @@ import {
   Search,
   Download,
   Loader2,
+  BarChart3,
+  Globe,
+  Flame,
+  ArrowUpRight,
+  ArrowDownRight,
 } from "lucide-react";
-import type { TrendAnalysisResult, ProductOpportunity } from "@/lib/types";
+import type { TrendAnalysisResult, ProductOpportunity, MarketData } from "@/lib/types";
 
 // ─── Helpers ──────────────────────────────────────────────────────────
 function scoreColor(score: number): {
@@ -53,6 +59,219 @@ function scoreGradient(score: number): string {
   if (score >= 80) return "from-emerald-500 to-green-600";
   if (score >= 50) return "from-amber-500 to-orange-600";
   return "from-red-500 to-rose-600";
+}
+
+// ─── Sparkline component ──────────────────────────────────────────────
+function Sparkline({
+  data,
+  width = 200,
+  height = 48,
+}: {
+  data: { month: string; value: number }[];
+  width?: number;
+  height?: number;
+}) {
+  if (!data || data.length < 2) return null;
+
+  const padding = 2;
+  const chartWidth = width - padding * 2;
+  const chartHeight = height - padding * 2;
+
+  const values = data.map((d) => d.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+
+  const points = data.map((d, i) => {
+    const x = padding + (i / (data.length - 1)) * chartWidth;
+    const y = padding + chartHeight - ((d.value - min) / range) * chartHeight;
+    return `${x},${y}`;
+  });
+
+  const linePath = `M${points.join(" L")}`;
+
+  // Area fill path
+  const firstX = padding;
+  const lastX = padding + chartWidth;
+  const bottomY = padding + chartHeight;
+  const areaPath = `${linePath} L${lastX},${bottomY} L${firstX},${bottomY} Z`;
+
+  return (
+    <svg
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
+      className="shrink-0"
+      aria-label="Interest over time sparkline"
+    >
+      {/* Area fill gradient */}
+      <defs>
+        <linearGradient id="sparkline-fill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#818cf8" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#818cf8" stopOpacity="0.02" />
+        </linearGradient>
+        <linearGradient id="sparkline-line" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor="#6366f1" />
+          <stop offset="100%" stopColor="#a78bfa" />
+        </linearGradient>
+      </defs>
+      {/* Area fill */}
+      <path d={areaPath} fill="url(#sparkline-fill)" />
+      {/* Line */}
+      <path
+        d={linePath}
+        fill="none"
+        stroke="url(#sparkline-line)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+// ─── Market Data section ──────────────────────────────────────────────
+function MarketDataSection({
+  marketData,
+  onSearchRelated,
+}: {
+  marketData: MarketData;
+  onSearchRelated: (term: string) => void;
+}) {
+  const [expanded, setExpanded] = useState(true);
+
+  const trendIcon =
+    marketData.trendDirection === "rising" ? (
+      <ArrowUpRight className="h-4 w-4" />
+    ) : marketData.trendDirection === "falling" ? (
+      <ArrowDownRight className="h-4 w-4" />
+    ) : (
+      <Minus className="h-4 w-4" />
+    );
+
+  const trendBadge = {
+    rising: "bg-emerald-500/10 text-emerald-400 border-emerald-500/30",
+    falling: "bg-red-500/10 text-red-400 border-red-500/30",
+    stable: "bg-amber-500/10 text-amber-400 border-amber-500/30",
+  };
+
+  const trendLabel = {
+    rising: "Rising",
+    falling: "Falling",
+    stable: "Stable",
+  };
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm overflow-hidden">
+      {/* Header */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between p-5 hover:bg-white/[0.02] transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/10 border border-indigo-500/20">
+            <BarChart3 className="h-4 w-4 text-indigo-400" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-white">Market Data</h3>
+            <p className="text-xs text-gray-500">Google Trends insights</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Trend badge */}
+          <span
+            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium border ${trendBadge[marketData.trendDirection]}`}
+          >
+            {trendIcon}
+            {trendLabel[marketData.trendDirection]}
+          </span>
+          {expanded ? (
+            <ChevronUp className="h-4 w-4 text-gray-500" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-gray-500" />
+          )}
+        </div>
+      </button>
+
+      {/* Expanded content */}
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          expanded ? "max-h-[800px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className="px-5 pb-5 space-y-4 border-t border-white/10 pt-4">
+          {/* Sparkline */}
+          {marketData.interestTimeline.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-2">
+                📈 Interest Over Time (12 months)
+              </p>
+              <div className="flex items-center gap-4">
+                <Sparkline data={marketData.interestTimeline} width={280} height={56} />
+                <div className="flex flex-col text-xs text-gray-400 hidden sm:flex">
+                  <span>High: {Math.max(...marketData.interestTimeline.map((d) => d.value))}</span>
+                  <span>Low: {Math.min(...marketData.interestTimeline.map((d) => d.value))}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Related queries */}
+          {marketData.relatedQueries.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-2 flex items-center gap-1.5">
+                <Flame className="h-3 w-3 text-orange-400" />
+                Rising Related Terms
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {marketData.relatedQueries.map((term) => (
+                  <button
+                    key={term}
+                    onClick={() => onSearchRelated(term)}
+                    className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 hover:bg-indigo-500/20 hover:text-indigo-200 transition-colors cursor-pointer"
+                    title={`Search for "${term}"`}
+                  >
+                    {term}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Top regions */}
+          {marketData.topRegions.length > 0 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-2 flex items-center gap-1.5">
+                <Globe className="h-3 w-3 text-blue-400" />
+                Top Regions
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {marketData.topRegions.map((region) => (
+                  <span
+                    key={region}
+                    className="text-xs px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                  >
+                    {region}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Seasonality */}
+          {marketData.seasonality && (
+            <div className="flex items-center gap-2 text-xs">
+              <Calendar className="h-3.5 w-3.5 text-gray-500" />
+              <span className="text-gray-400">
+                Seasonality:{" "}
+                <span className="text-gray-300">{marketData.seasonality}</span>
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ─── Skeleton loader ──────────────────────────────────────────────────
@@ -300,11 +519,13 @@ export function TrendResults({
   isLoading,
   query,
   platform,
+  onSearchRelated,
 }: {
   data: TrendAnalysisResult | null;
   isLoading: boolean;
   query: string;
   platform: string;
+  onSearchRelated?: (term: string) => void;
 }) {
   const [savedProducts, setSavedProducts] = useState<Set<string>>(() => {
     if (typeof window === "undefined") return new Set();
@@ -325,7 +546,6 @@ export function TrendResults({
         const next = new Set(prev);
         if (next.has(key)) {
           // Already saved — we don't support unsave via this API currently
-          // (could add DELETE but the task says save to projects)
         } else {
           next.add(key);
         }
@@ -393,6 +613,13 @@ export function TrendResults({
     }
   }, [data, exporting, query]);
 
+  const handleRelatedSearch = useCallback(
+    (term: string) => {
+      onSearchRelated?.(term);
+    },
+    [onSearchRelated]
+  );
+
   if (isLoading) return <ResultsSkeleton />;
   if (!data) return <EmptyState />;
 
@@ -400,6 +627,14 @@ export function TrendResults({
 
   return (
     <div className="space-y-6">
+      {/* Market Data section (above summary when available) */}
+      {data.marketData && (
+        <MarketDataSection
+          marketData={data.marketData}
+          onSearchRelated={handleRelatedSearch}
+        />
+      )}
+
       {/* Summary card */}
       <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
         {/* Gradient accent bar */}

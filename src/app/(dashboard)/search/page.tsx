@@ -54,37 +54,51 @@ export default function SearchPage() {
 
   const selectedPlatform = platforms.find((p) => p.id === platform) || platforms[0];
 
+  const performSearch = useCallback(
+    async (searchQuery: string, searchPlatform: string) => {
+      setIsLoading(true);
+      setError(null);
+      setResults(null);
+
+      try {
+        const res = await fetch("/api/trends", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query: searchQuery, platform: searchPlatform }),
+        });
+
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body.error || `Request failed (${res.status})`);
+        }
+
+        const data: TrendAnalysisResult = await res.json();
+        setResults(data);
+        setHasSearched(true);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Something went wrong. Please try again."
+        );
+        setHasSearched(true);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    []
+  );
+
   const handleSearch = useCallback(async () => {
     if (!query.trim() || query.trim().length < 2) return;
+    await performSearch(query.trim(), platform);
+  }, [query, platform, performSearch]);
 
-    setIsLoading(true);
-    setError(null);
-    setResults(null);
-
-    try {
-      const res = await fetch("/api/trends", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), platform }),
-      });
-
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || `Request failed (${res.status})`);
-      }
-
-      const data: TrendAnalysisResult = await res.json();
-      setResults(data);
-      setHasSearched(true);
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Something went wrong. Please try again."
-      );
-      setHasSearched(true);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [query, platform]);
+  const handleRelatedSearch = useCallback(
+    (term: string) => {
+      setQuery(term);
+      performSearch(term, platform);
+    },
+    [platform, performSearch]
+  );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
@@ -227,6 +241,7 @@ export default function SearchPage() {
         isLoading={isLoading}
         query={query.trim()}
         platform={selectedPlatform.label}
+        onSearchRelated={handleRelatedSearch}
       />
 
       {/* Tip */}

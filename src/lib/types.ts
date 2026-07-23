@@ -11,10 +11,19 @@ export interface ProductOpportunity {
   seasonalRelevance: string;
 }
 
+export interface MarketData {
+  trendDirection: "rising" | "falling" | "stable";
+  interestTimeline: { month: string; value: number }[];
+  relatedQueries: string[];
+  topRegions: string[];
+  seasonality: string | null;
+}
+
 export interface TrendAnalysisResult {
   opportunityScore: number;
   marketInsight: string;
   products: ProductOpportunity[];
+  marketData?: MarketData;
 }
 
 export interface TrendSearchRequest {
