@@ -67,7 +67,9 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Gradient text helper */
+/* ─── Gradient Text Helpers ────────────────────────────────────── */
+
+/* Original indigo-purple gradient */
 .gradient-text {
   background: linear-gradient(to right, #818cf8, #a78bfa, #818cf8);
   background-size: 200% auto;
@@ -77,8 +79,48 @@ html {
   animation: gradient-shift 3s ease infinite;
 }
 
+/* Multi-color vibrant gradient */
+.gradient-text-vibrant {
+  background: linear-gradient(
+    to right,
+    #6366f1,
+    #8b5cf6,
+    #d946ef,
+    #f43f5e,
+    #d946ef,
+    #8b5cf6,
+    #6366f1
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Sunset gradient (coral → pink → violet) */
+.gradient-text-sunset {
+  background: linear-gradient(to right, #f43f5e, #ec4899, #8b5cf6);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Ocean gradient (teal → cyan → indigo) */
+.gradient-text-ocean {
+  background: linear-gradient(to right, #14b8a6, #06b6d4, #6366f1);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 3s ease infinite;
+}
+
 @keyframes gradient-shift {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -86,8 +128,113 @@ html {
   }
 }
 
-/* Selection color */
+/* ─── Gradient Background Classes ──────────────────────────────── */
+
+.gradient-bg-sunset {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #8b5cf6 100%);
+}
+
+.gradient-bg-ocean {
+  background: linear-gradient(135deg, #14b8a6 0%, #06b6d4 50%, #6366f1 100%);
+}
+
+.gradient-bg-forest {
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 50%, #06b6d4 100%);
+}
+
+.gradient-bg-premium {
+  background: linear-gradient(
+    135deg,
+    #6366f1 0%,
+    #8b5cf6 33%,
+    #d946ef 66%,
+    #f43f5e 100%
+  );
+}
+
+/* ─── Gradient Mesh Background (for hero) ─────────────────────── */
+
+.gradient-mesh {
+  background: radial-gradient(
+      ellipse at 20% 50%,
+      rgba(99, 102, 241, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 80% 20%,
+      rgba(217, 70, 239, 0.08) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      ellipse at 50% 80%,
+      rgba(244, 63, 94, 0.06) 0%,
+      transparent 50%
+    );
+  animation: meshPulse 8s ease-in-out infinite;
+}
+
+@keyframes meshPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ─── Glow Effects ────────────────────────────────────────────── */
+
+.glow-pro {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.15), 0 0 80px rgba(217, 70, 239, 0.1);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.15),
+      0 0 80px rgba(217, 70, 239, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(139, 92, 246, 0.25),
+      0 0 120px rgba(217, 70, 239, 0.18);
+  }
+}
+
+/* ─── Colorful border accents ─────────────────────────────────── */
+
+.border-accent-indigo {
+  border-color: rgba(99, 102, 241, 0.3);
+}
+.border-accent-fuchsia {
+  border-color: rgba(217, 70, 239, 0.3);
+}
+.border-accent-coral {
+  border-color: rgba(244, 63, 94, 0.3);
+}
+.border-accent-teal {
+  border-color: rgba(20, 184, 166, 0.3);
+}
+.border-accent-amber {
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* Colorful top border accent */
+.border-t-accent {
+  border-top: 2px solid transparent;
+  border-image: linear-gradient(
+    to right,
+    #6366f1,
+    #8b5cf6,
+    #d946ef,
+    #f43f5e
+  ) 1;
+}
+
+/* ─── Selection color ─────────────────────────────────────────── */
+
 ::selection {
-  background: rgba(99, 102, 241, 0.3);
+  background: rgba(217, 70, 239, 0.3);
   color: #fff;
 }

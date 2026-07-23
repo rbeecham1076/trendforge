@@ -16,6 +16,19 @@ const badgeVariants = cva(
         outline: "border border-white/20 text-gray-300",
         success:
           "bg-emerald-600/20 text-emerald-300 border border-emerald-500/30",
+        // New vibrant variants
+        pink: "bg-pink-600/20 text-pink-300 border border-pink-500/30",
+        coral:
+          "bg-coral-600/20 text-coral-300 border border-coral-500/30",
+        teal: "bg-teal-600/20 text-teal-300 border border-teal-500/30",
+        amber:
+          "bg-amber-600/20 text-amber-300 border border-amber-500/30",
+        fuchsia:
+          "bg-fuchsia-600/20 text-fuchsia-300 border border-fuchsia-500/30",
+        cyan: "bg-cyan-600/20 text-cyan-300 border border-cyan-500/30",
+        // Gradient variants
+        gradient:
+          "bg-gradient-to-r from-indigo-600/20 via-fuchsia-600/20 to-coral-600/20 text-fuchsia-300 border border-fuchsia-500/30",
       },
     },
     defaultVariants: {

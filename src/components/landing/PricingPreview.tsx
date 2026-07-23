@@ -71,10 +71,7 @@ export function PricingPreview() {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white">
             Simple,{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Transparent
-            </span>{" "}
-            Pricing
+            <span className="gradient-text-vibrant">Transparent</span> Pricing
           </h2>
           <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
             Start free, upgrade when you&apos;re ready to scale
@@ -87,12 +84,12 @@ export function PricingPreview() {
               key={tier.name}
               className={`relative rounded-2xl border backdrop-blur-sm p-8 flex flex-col transition-all duration-300 hover:scale-[1.02] ${
                 tier.featured
-                  ? "border-indigo-500/30 bg-white/[0.05] shadow-xl shadow-indigo-500/10"
+                  ? "border-fuchsia-500/30 bg-white/[0.05] shadow-xl shadow-fuchsia-500/10 glow-pro"
                   : "border-white/5 bg-white/[0.02] hover:bg-white/[0.04]"
               }`}
             >
               {tier.featured && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white border-none">
+                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-fuchsia-600 text-white border-none">
                   Most Popular
                 </Badge>
               )}
@@ -125,7 +122,7 @@ export function PricingPreview() {
               {"plan" in tier ? (
                 <SubscribeButton
                   plan={tier.plan as "pro" | "business"}
-                  variant={tier.featured ? "premium" : "outline"}
+                  variant={tier.featured ? "vibrant" : "outline"}
                   size="lg"
                   className="w-full"
                 />

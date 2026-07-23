@@ -11,6 +11,13 @@ export interface ProductOpportunity {
   seasonalRelevance: string;
 }
 
+export interface ImageAnalysis {
+  keywords: string[];
+  products: string[];
+  palette: string[];
+  niche: string;
+}
+
 export interface TrendAnalysisResult {
   opportunityScore: number;
   marketInsight: string;

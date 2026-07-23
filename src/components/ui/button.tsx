@@ -20,6 +20,18 @@ const buttonVariants = cva(
         link: "text-indigo-400 underline-offset-4 hover:underline",
         premium:
           "bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_100%] text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 animate-gradient bg-right hover:bg-left",
+        // New multi-color gradient variant
+        vibrant:
+          "bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-coral-600 bg-[length:200%_100%] text-white shadow-lg shadow-fuchsia-500/25 hover:shadow-fuchsia-500/40 animate-gradient bg-right hover:bg-left",
+        // Sunset variant
+        sunset:
+          "bg-gradient-to-r from-coral-600 via-pink-600 to-violet-600 bg-[length:200%_100%] text-white shadow-lg shadow-coral-500/25 hover:shadow-coral-500/40 animate-gradient bg-right hover:bg-left",
+        // Ocean variant
+        ocean:
+          "bg-gradient-to-r from-teal-600 via-cyan-600 to-indigo-600 bg-[length:200%_100%] text-white shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 animate-gradient bg-right hover:bg-left",
+        // Forest variant
+        forest:
+          "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-[length:200%_100%] text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 animate-gradient bg-right hover:bg-left",
       },
       size: {
         default: "h-10 px-5 py-2",

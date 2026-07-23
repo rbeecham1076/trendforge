@@ -23,28 +23,66 @@ const navItems = [
     label: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+    accent: "indigo",
   },
   {
     label: "Trend Search",
     href: "/dashboard/search",
     icon: Search,
+    accent: "fuchsia",
   },
   {
     label: "Saved Projects",
     href: "/dashboard/projects",
     icon: Bookmark,
+    accent: "amber",
   },
   {
     label: "Pricing",
     href: "/pricing",
     icon: CreditCard,
+    accent: "emerald",
   },
   {
     label: "Settings",
     href: "/dashboard/settings",
     icon: Settings,
+    accent: "teal",
   },
 ];
+
+const accentColors: Record<string, { bg: string; text: string; border: string; ring: string }> = {
+  indigo: {
+    bg: "bg-indigo-500/10",
+    text: "text-indigo-400",
+    border: "border-indigo-500/20",
+    ring: "ring-indigo-500/30",
+  },
+  fuchsia: {
+    bg: "bg-fuchsia-500/10",
+    text: "text-fuchsia-400",
+    border: "border-fuchsia-500/20",
+    ring: "ring-fuchsia-500/30",
+  },
+  amber: {
+    bg: "bg-amber-500/10",
+    text: "text-amber-400",
+    border: "border-amber-500/20",
+    ring: "ring-amber-500/30",
+  },
+  emerald: {
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-400",
+    border: "border-emerald-500/20",
+    ring: "ring-emerald-500/30",
+  },
+  teal: {
+    bg: "bg-teal-500/10",
+    text: "text-teal-400",
+    border: "border-teal-500/20",
+    ring: "ring-teal-500/30",
+  },
+};
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -55,8 +93,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   const userName = user?.fullName || user?.firstName || "User";
-  const userEmail =
-    user?.primaryEmailAddress?.emailAddress || "";
+  const userEmail = user?.primaryEmailAddress?.emailAddress || "";
   const userInitial = (userName || "U").charAt(0).toUpperCase();
 
   async function handleSignOut() {
@@ -71,12 +108,12 @@ export function Sidebar() {
           href="/dashboard"
           className={`flex items-center gap-2 ${collapsed ? "justify-center" : ""}`}
         >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 via-fuchsia-500 to-coral-500">
             <TrendingUp className="h-4 w-4 text-white" />
           </div>
           {!collapsed && (
             <span className="text-lg font-bold text-white">
-              Trend<span className="text-indigo-400">Forge</span>
+              Trend<span className="text-fuchsia-400">Forge</span>
             </span>
           )}
         </Link>
@@ -97,6 +134,7 @@ export function Sidebar() {
         {navItems.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
+          const colors = accentColors[item.accent];
 
           return (
             <Link
@@ -105,14 +143,14 @@ export function Sidebar() {
               onClick={() => setMobileOpen(false)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group ${
                 isActive
-                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
+                  ? `${colors.bg} ${colors.text} ${colors.border} border`
                   : "text-gray-400 hover:text-white hover:bg-white/5"
               } ${collapsed ? "justify-center px-2" : ""}`}
             >
               <Icon
                 className={`h-5 w-5 shrink-0 ${
                   isActive
-                    ? "text-indigo-400"
+                    ? colors.text
                     : "text-gray-500 group-hover:text-gray-300"
                 }`}
               />
@@ -129,7 +167,7 @@ export function Sidebar() {
             collapsed ? "justify-center" : ""
           }`}
         >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-medium text-white">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-indigo-500 via-fuchsia-500 to-coral-500 text-sm font-medium text-white">
             {userInitial}
           </div>
           {!collapsed && (

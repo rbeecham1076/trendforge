@@ -50,10 +50,20 @@ function scoreColor(score: number): {
 }
 
 function scoreGradient(score: number): string {
-  if (score >= 80) return "from-emerald-500 to-green-600";
-  if (score >= 50) return "from-amber-500 to-orange-600";
-  return "from-red-500 to-rose-600";
+  if (score >= 80) return "from-emerald-500 via-teal-500 to-cyan-500";
+  if (score >= 50) return "from-amber-500 via-orange-500 to-coral-500";
+  return "from-red-500 via-rose-500 to-pink-500";
 }
+
+// Multi-color tag accent map — cycles through colors for visual variety
+const tagColors = [
+  "bg-indigo-500/10 text-indigo-300 border-indigo-500/20",
+  "bg-fuchsia-500/10 text-fuchsia-300 border-fuchsia-500/20",
+  "bg-teal-500/10 text-teal-300 border-teal-500/20",
+  "bg-coral-500/10 text-coral-300 border-coral-500/20",
+  "bg-amber-500/10 text-amber-300 border-amber-500/20",
+  "bg-violet-500/10 text-violet-300 border-violet-500/20",
+];
 
 // ─── Skeleton loader ──────────────────────────────────────────────────
 function ResultsSkeleton() {
@@ -120,7 +130,12 @@ function ProductCard({
   const color = scoreColor(product.opportunityScore);
 
   return (
-    <div className="group rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm hover:border-white/20 transition-all duration-300 overflow-hidden">
+    <div className="group rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-sm hover:border-white/20 transition-all duration-300 overflow-hidden">
+      {/* Colorful top accent stripe */}
+      <div
+        className={`h-0.5 bg-gradient-to-r ${scoreGradient(product.opportunityScore)}`}
+      />
+
       {/* Header */}
       <div className="p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
@@ -251,17 +266,17 @@ function ProductCard({
               </p>
             </div>
 
-            {/* Tags */}
+            {/* Tags with multi-color accents */}
             <div>
               <div className="flex items-center gap-2 text-xs text-gray-500 mb-1.5">
                 <Tag className="h-3.5 w-3.5" />
                 Tags ({product.etsyTags.length})
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {product.etsyTags.map((tag) => (
+                {product.etsyTags.map((tag, i) => (
                   <span
                     key={tag}
-                    className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20"
+                    className={`text-xs px-2.5 py-1 rounded-full border ${tagColors[i % tagColors.length]}`}
                   >
                     {tag}
                   </span>
@@ -281,7 +296,7 @@ function ProductCard({
                     key={i}
                     className="flex items-start gap-2 text-sm text-gray-400"
                   >
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500" />
                     {idea}
                   </li>
                 ))}
@@ -325,7 +340,6 @@ export function TrendResults({
         const next = new Set(prev);
         if (next.has(key)) {
           // Already saved — we don't support unsave via this API currently
-          // (could add DELETE but the task says save to projects)
         } else {
           next.add(key);
         }
@@ -401,8 +415,8 @@ export function TrendResults({
   return (
     <div className="space-y-6">
       {/* Summary card */}
-      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm">
-        {/* Gradient accent bar */}
+      <div className="relative overflow-hidden rounded-xl border border-white/10 bg-white/[0.05] backdrop-blur-sm">
+        {/* Multi-color gradient accent bar */}
         <div
           className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${scoreGradient(data.opportunityScore)}`}
         />
@@ -425,7 +439,7 @@ export function TrendResults({
                   data.opportunityScore >= 80
                     ? "success"
                     : data.opportunityScore >= 50
-                      ? "default"
+                      ? "gradient"
                       : "destructive"
                 }
                 className="text-sm px-3 py-1"
@@ -490,7 +504,7 @@ export function TrendResults({
       </div>
 
       {/* Bottom export bar */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm">
+      <div className="rounded-xl border border-white/10 bg-white/[0.05] p-4 flex flex-col sm:flex-row items-center justify-between gap-4 backdrop-blur-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 border border-emerald-500/20">
             <Download className="h-4 w-4 text-emerald-400" />

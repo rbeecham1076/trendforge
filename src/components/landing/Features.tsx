@@ -15,36 +15,60 @@ const features = [
     title: "AI Trend Discovery",
     description:
       "Our AI scans millions of data points across Etsy, Shopify, Amazon, and social platforms to identify emerging trends before they peak.",
+    gradient: "from-indigo-500/20 to-violet-500/20",
+    iconColor: "text-indigo-400",
+    borderColor: "border-indigo-500/20 group-hover:border-indigo-500/40",
+    accent: "indigo",
   },
   {
     icon: Target,
     title: "Opportunity Scoring",
     description:
       "Every product idea gets a proprietary score based on demand, competition, margin potential, and seasonal timing — so you know exactly what to pursue.",
+    gradient: "from-fuchsia-500/20 to-pink-500/20",
+    iconColor: "text-fuchsia-400",
+    borderColor: "border-fuchsia-500/20 group-hover:border-fuchsia-500/40",
+    accent: "fuchsia",
   },
   {
     icon: Shield,
     title: "Competition Analysis",
     description:
       "See exactly how many sellers are competing, their price points, review counts, and estimated monthly sales for any product niche.",
+    gradient: "from-teal-500/20 to-cyan-500/20",
+    iconColor: "text-teal-400",
+    borderColor: "border-teal-500/20 group-hover:border-teal-500/40",
+    accent: "teal",
   },
   {
     icon: FileText,
     title: "SEO-Ready Listings",
     description:
       "Get optimized titles, descriptions, tags, and keywords for every product idea — formatted for Etsy, Shopify, or Amazon listings.",
+    gradient: "from-coral-500/20 to-pink-500/20",
+    iconColor: "text-coral-400",
+    borderColor: "border-coral-500/20 group-hover:border-coral-500/40",
+    accent: "coral",
   },
   {
     icon: PackageSearch,
     title: "Bundle Suggestions",
     description:
       "Discover complementary products to bundle together for higher average order value and better margins.",
+    gradient: "from-amber-500/20 to-orange-500/20",
+    iconColor: "text-amber-400",
+    borderColor: "border-amber-500/20 group-hover:border-amber-500/40",
+    accent: "amber",
   },
   {
     icon: Calendar,
     title: "Seasonal Forecasting",
     description:
       "Plan your inventory months ahead with AI-powered seasonal trend predictions and demand forecasting.",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+    iconColor: "text-emerald-400",
+    borderColor: "border-emerald-500/20 group-hover:border-emerald-500/40",
+    accent: "emerald",
   },
 ];
 
@@ -58,9 +82,7 @@ export function Features() {
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-bold text-white">
             Everything You Need to{" "}
-            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-              Win
-            </span>
+            <span className="gradient-text-vibrant">Win</span>
           </h2>
           <p className="mt-4 text-lg text-gray-400 max-w-2xl mx-auto">
             Powerful AI tools designed specifically for marketplace sellers
@@ -71,10 +93,12 @@ export function Features() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group relative rounded-xl border border-white/5 bg-white/[0.03] backdrop-blur-sm p-6 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5"
+              className={`group relative rounded-xl border border-white/5 bg-white/[0.05] backdrop-blur-sm p-6 hover:bg-white/[0.08] hover:${feature.borderColor} transition-all duration-300 hover:shadow-xl hover:shadow-${feature.accent}-500/10`}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/20 group-hover:border-indigo-500/40 group-hover:scale-110 transition-all duration-300">
-                <feature.icon className="h-6 w-6 text-indigo-400" />
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${feature.gradient} border ${feature.borderColor} group-hover:scale-110 transition-all duration-300`}
+              >
+                <feature.icon className={`h-6 w-6 ${feature.iconColor}`} />
               </div>
               <h3 className="mt-4 text-lg font-semibold text-white">
                 {feature.title}

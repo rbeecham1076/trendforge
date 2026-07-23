@@ -9,7 +9,7 @@ import { Loader2, Check, ArrowRight } from "lucide-react";
 interface SubscribeButtonProps {
   plan: "pro" | "business";
   currentPlan?: string;
-  variant?: "premium" | "outline" | "default";
+  variant?: "premium" | "vibrant" | "outline" | "default";
   size?: "default" | "sm" | "lg" | "xl";
   className?: string;
 }

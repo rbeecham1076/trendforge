@@ -8,21 +8,23 @@ import { ArrowRight, Sparkles } from "lucide-react";
 export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-      {/* Background effects */}
+      {/* Multi-color gradient mesh background */}
+      <div className="absolute inset-0 gradient-mesh" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-black to-black" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-purple-600/20 rounded-full blur-[100px]" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-indigo-600/20 via-fuchsia-600/15 to-coral-600/10 rounded-full blur-[120px]" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-gradient-to-r from-violet-600/20 via-fuchsia-600/15 to-coral-600/10 rounded-full blur-[100px]" />
+      <div className="absolute top-1/3 left-1/4 w-[300px] h-[300px] bg-gradient-to-r from-teal-600/10 to-cyan-600/10 rounded-full blur-[80px] animate-pulse" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
         <div className="animate-fade-in-up">
-          <Badge variant="default" className="mb-6 text-sm px-4 py-1.5">
+          <Badge variant="gradient" className="mb-6 text-sm px-4 py-1.5">
             <Sparkles className="h-3.5 w-3.5 mr-2" />
             AI-Powered Product Discovery
           </Badge>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white max-w-4xl mx-auto leading-[1.1]">
             Discover Winning Products{" "}
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">
+            <span className="gradient-text-vibrant">
               Before Your Competitors Do
             </span>
           </h1>
@@ -34,7 +36,7 @@ export function Hero() {
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
-              <Button size="xl" variant="premium">
+              <Button size="xl" variant="vibrant">
                 Start Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -53,12 +55,12 @@ export function Hero() {
 
         {/* Dashboard mockup */}
         <div className="mt-20 mx-auto max-w-5xl animate-fade-in-up animation-delay-300">
-          <div className="relative rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl shadow-indigo-500/10 overflow-hidden">
+          <div className="relative rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-sm shadow-2xl shadow-fuchsia-500/10 overflow-hidden">
             <div className="flex items-center gap-2 px-4 py-3 border-b border-white/5 bg-white/[0.02]">
               <div className="flex gap-1.5">
                 <div className="h-3 w-3 rounded-full bg-red-500/80" />
-                <div className="h-3 w-3 rounded-full bg-yellow-500/80" />
-                <div className="h-3 w-3 rounded-full bg-green-500/80" />
+                <div className="h-3 w-3 rounded-full bg-amber-500/80" />
+                <div className="h-3 w-3 rounded-full bg-emerald-500/80" />
               </div>
               <span className="text-xs text-gray-500 ml-2">
                 TrendForge AI · Dashboard
@@ -95,7 +97,7 @@ export function Hero() {
                     key={i}
                     className="flex items-center gap-4 rounded-lg bg-white/[0.02] border border-white/5 p-4 hover:bg-white/[0.04] transition-colors"
                   >
-                    <div className="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 text-sm font-bold">
+                    <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-500/20 to-fuchsia-500/20 flex items-center justify-center text-fuchsia-400 text-sm font-bold">
                       #{i}
                     </div>
                     <div className="flex-1">
